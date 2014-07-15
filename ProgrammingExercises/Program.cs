@@ -30,7 +30,7 @@ namespace ProgrammingExercises
 			{
 				var parts = input.Split();
 				var commandName = parts[0];
-				var commandArgs = parts.Skip(1).Take(parts.Length - 1).ToArray();
+				var commandArgs = parts.Skip(1).Where(str => !string.IsNullOrWhiteSpace(str)).ToArray();
 				try
 				{
 					Dispatch(commandName, commandArgs);
@@ -78,6 +78,18 @@ namespace ProgrammingExercises
 						return Type.Missing;
 					else
 						throw new ArgumentException(string.Format("Required parameter \"{0}\" is missing.", param.Name));
+				}
+				// Support 'params' array.
+				if(param.GetCustomAttribute(typeof(ParamArrayAttribute)) != null)
+				{
+					var elementType = param.ParameterType.GetElementType();
+					var array = Array.CreateInstance(elementType, arguments.Length - index);
+					for(int i = index; i < arguments.Length; i++)
+					{
+						var val = parsers[elementType](arguments[i]);
+						array.SetValue(val, i - index);
+					}						
+					return array;
 				}
 				return parsers[param.ParameterType](arguments[index]);
 			}).ToArray();
