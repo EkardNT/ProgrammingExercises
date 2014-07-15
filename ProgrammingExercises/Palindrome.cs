@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace ProgrammingExercises
 {
@@ -22,15 +23,7 @@ namespace ProgrammingExercises
 
 		private static bool TestSlow(string word)
 		{
-			return word == word.Reverse();
-		}
-
-		private static string Reverse(this string @this)
-		{
-			var chars = new char[@this.Length];
-			for (int i = 0; i < @this.Length; i++)
-				chars[i] = @this[@this.Length - 1 - i];
-			return new string(chars);
+			return word == new string(word.Reverse().ToArray());
 		}
 	}
 }
